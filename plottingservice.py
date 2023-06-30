@@ -7,7 +7,8 @@ from polldata import PollData
 
 
 class PlottingService:
-
+    def __init__(self):
+        self.directory = "plots/"
     def generate_plot(self, data: PollData):
         chart_value: list[int] = []
         chart_labels: list[str] = []
@@ -29,11 +30,13 @@ class PlottingService:
 
         df = px.data.tips()
         fig = px.pie(df, values=chart_value, names=chart_labels, title=data.question)
+        new_file_name = self.directory + data.reference_name + ".png"
         if data.reference_name + "_old.png" in os.listdir():
-            os.remove(data.reference_name + "_old.png")
+            os.remove(new_file_name)
         if data.reference_name + ".png" in os.listdir():
-            os.rename(data.reference_name + ".png", data.reference_name + "_old.png")
-        fig.write_image(data.reference_name + ".png")
+            os.rename(new_file_name, data.reference_name + "_old.png")
+        fig.write_image(new_file_name)
+
 
 
 if __name__ == "__main__":
