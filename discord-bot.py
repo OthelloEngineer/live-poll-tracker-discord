@@ -1,14 +1,12 @@
-import sched
-
 import hikari
 from lightbulb.ext import tasks
-import plottingservice
-import strawpollservice
+from poll_fetchers.strawpollservice import StrawpollService
+from plotting_services.plotly_service import PlottingService
 import json
 import lightbulb
-from tracked_source import TrackedSource
+from bot_data.active_poll import ActivePoll
 
-polls: list[TrackedSource] = []
+polls: list[ActivePoll] = []
 
 config = json.load(open('config.json'))
 token = config["token"]
@@ -38,12 +36,12 @@ async def ping(event: hikari.GuildMessageCreateEvent) -> None:
 @lightbulb.command('track_strawpoll', 'start a live tracking of a strawpoll')
 @lightbulb.implements(lightbulb.SlashCommand)
 async def start_poll_visualization(ctx: lightbulb.SlashContext):
-    strawpoll_service = strawpollservice.StrawpollService()
-    plotting_service = plottingservice.PlottingService()
+    strawpoll_service = StrawpollService()
+    plotting_service = PlottingService()
     poll_data = strawpoll_service.get_data(ctx.options.poll_link, ctx.options.poll_name)
-    plotting_service.generate_plot(poll_data)
+    plotting_service.create_plot(poll_data)
     msg = await ctx.respond(hikari.File(ctx.options.poll_name + ".png"))
-    source = TrackedSource(link=ctx.options.poll_link, name=ctx.options.poll_name, message=msg)
+    source = ActivePoll(link=ctx.options.poll_link, name=ctx.options.poll_name, message=msg)
     polls.append(source)
 
 
@@ -55,7 +53,7 @@ async def update_polls():
         strawpoll_service = strawpollservice.StrawpollService()
         plotting_service = plottingservice.PlottingService()
         poll_data = strawpoll_service.get_data(poll.link, poll.name)
-        plotting_service.generate_plot(poll_data)
+        plotting_service.create_plot(poll_data)
         print("updating poll")
         print(poll_data.reference_name)
         await poll.message.edit(hikari.File(poll_data.reference_name + ".png"))
@@ -63,6 +61,7 @@ async def update_polls():
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+
     bot.run()
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
