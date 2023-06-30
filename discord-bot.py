@@ -6,8 +6,9 @@ import json
 import lightbulb
 from bot_data.active_poll import ActivePoll
 import bot_data.discord_message_templates as templates
-polls: list[ActivePoll] = []
 
+
+polls: list[ActivePoll] = []
 config = json.load(open('config.json'))
 token = config["token"]
 channel = config["channel_id"]
@@ -41,6 +42,7 @@ async def start_poll_visualization(ctx: lightbulb.SlashContext):
     poll_data = strawpoll_service.get_data(ctx.options.poll_link, ctx.options.poll_name)
     plotting_service.create_plot(poll_data)
     await ctx.respond(templates.start_poll_message(ctx.options.poll_name, ctx.options.poll_link))
+
     msg = await ctx.respond(hikari.File("plots/" + ctx.options.poll_name + ".png"))
     source = ActivePoll(link=ctx.options.poll_link, name=ctx.options.poll_name, message=msg)
     polls.append(source)
