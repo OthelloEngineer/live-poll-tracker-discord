@@ -1,13 +1,14 @@
 import unittest
-import strawpollservice
+from poll_fetchers.strawpollservice import StrawpollService
+from plotting_services.plotly_service import PlottingService
 import os.path
 
 
 class TestIntegration(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        cls.strawpoll_service = strawpollservice.StrawpollService()
-        cls.plotting_service = plottingservice.PlottingService()
+        cls.strawpoll_service = StrawpollService()
+        cls.plotting_service = PlottingService()
         cls.link = "https://strawpoll.com/PKgl3wqaQnp"
         os.chdir("..")
 
