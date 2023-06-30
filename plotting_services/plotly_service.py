@@ -1,8 +1,6 @@
 import os
 
 import plotly.express as px
-import numpy as np
-import pandas as pd
 from polldata import PollData
 
 
@@ -33,10 +31,10 @@ class PlottingService:
         return px.pie(df, values=chart_value, names=chart_labels, title=data.question)
 
     def __replace_file(self, file_name: str):
-        if self.directory + file_name + "_old.png" in os.listdir():
+        if file_name + "_old.png" in os.listdir(self.directory):
             os.remove(self.directory + file_name + "_old.png")
-        if self.directory + file_name + ".png" in os.listdir():
-            os.rename(self.directory + file_name + ".png", self.directory + str + "_old.png")
+        if file_name + ".png" in os.listdir(self.directory):
+            os.rename(self.directory + file_name + ".png", self.directory + file_name + "_old.png")
 
 
 if __name__ == "__main__":

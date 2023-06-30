@@ -22,7 +22,20 @@ class TestIntegration(unittest.TestCase):
         # Assert
         self.assertTrue(my_file)
 
+    def test_can_update_plot_from_poll(self):
+        # Arrange
+        poll_data = self.strawpoll_service.get_data(self.link, "Integration_Test")
+
+        # Act
+        self.plotting_service.update_plot(poll_data)
+        new_file = os.path.isfile("plots/Integration_Test.png")
+        old_file = os.path.isfile("plots/Integration_Test_old.png")
+
+        # Assert
+        self.assertTrue(new_file)
+        self.assertTrue(old_file)
 
     @classmethod
     def tearDownClass(cls) -> None:
         os.remove("plots/Integration_Test.png")
+        os.remove("plots/Integration_Test_old.png")

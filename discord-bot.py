@@ -5,7 +5,7 @@ from plotting_services.plotly_service import PlottingService
 import json
 import lightbulb
 from bot_data.active_poll import ActivePoll
-
+import bot_data.discord_message_templates as templates
 polls: list[ActivePoll] = []
 
 config = json.load(open('config.json'))
@@ -40,7 +40,8 @@ async def start_poll_visualization(ctx: lightbulb.SlashContext):
     plotting_service = PlottingService()
     poll_data = strawpoll_service.get_data(ctx.options.poll_link, ctx.options.poll_name)
     plotting_service.create_plot(poll_data)
-    msg = await ctx.respond(hikari.File(ctx.options.poll_name + ".png"))
+    await ctx.respond(templates.start_poll_message(ctx.options.poll_name, ctx.options.poll_link))
+    msg = await ctx.respond(hikari.File("plots/" + ctx.options.poll_name + ".png"))
     source = ActivePoll(link=ctx.options.poll_link, name=ctx.options.poll_name, message=msg)
     polls.append(source)
 
@@ -50,13 +51,13 @@ async def update_polls():
     global polls
     print("updating polls...")
     for poll in polls:
-        strawpoll_service = strawpollservice.StrawpollService()
-        plotting_service = plottingservice.PlottingService()
+        strawpoll_service = StrawpollService()
+        plotting_service = PlottingService()
         poll_data = strawpoll_service.get_data(poll.link, poll.name)
-        plotting_service.create_plot(poll_data)
+        plotting_service.update_plot(poll_data)
         print("updating poll")
         print(poll_data.reference_name)
-        await poll.message.edit(hikari.File(poll_data.reference_name + ".png"))
+        await poll.message.edit(hikari.File("plots/" + poll_data.reference_name + ".png"))
 
 
 # Press the green button in the gutter to run the script.
