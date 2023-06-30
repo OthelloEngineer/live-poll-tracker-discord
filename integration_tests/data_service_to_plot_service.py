@@ -38,4 +38,4 @@ class TestIntegration(unittest.TestCase):
     @classmethod
     def tearDownClass(cls) -> None:
         os.remove("plots/Integration_Test.png")
-        os.remove("plots/Integration_Test_old.png")
+        #os.remove("plots/Integration_Test_old.png")

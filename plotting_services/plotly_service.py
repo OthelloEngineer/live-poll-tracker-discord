@@ -28,7 +28,7 @@ class PlottingService:
             chart_labels.append(option)
 
         df = px.data.tips()
-        return px.pie(df, values=chart_value, names=chart_labels, title=data.question)
+        return px.pie(df, values=chart_value, names=chart_labels, title=data.question, height=800, width=800)
 
     def __replace_file(self, file_name: str):
         if file_name + "_old.png" in os.listdir(self.directory):
@@ -38,7 +38,12 @@ class PlottingService:
 
 
 if __name__ == "__main__":
+    import os
+    os.chdir("..")
+    print(os.getcwd())
     service = PlottingService()
+
     poll_data = PollData(question="Test", options={"A": 1, "B": 2, "C": 3}, total_votes=6,
                          link="https://api.strawpoll.com/v3/polls/PKgl3wqaQnp", reference_name="manual_test")
+
     service.create_plot(poll_data)
